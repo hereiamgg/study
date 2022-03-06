@@ -59,6 +59,7 @@ func ClientIP(r *http.Request) string {
 	return ""
 }
 
+// other
 func healthz(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "ok!")
 }
