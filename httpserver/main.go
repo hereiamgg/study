@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"metrics/metrics"
 	"net"
 	"net/http"
 	"os"
