@@ -3,17 +3,24 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
+	metrics.Register()
 	// NewServerMux
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", index)
+	mux.Handle("/metrics", promhttp.Handler())
+	mux.HandleFunc("/images", images)
 	mux.HandleFunc("/healthz", healthz)
 
 	// start
@@ -62,4 +69,13 @@ func ClientIP(r *http.Request) string {
 // other
 func healthz(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "ok!")
+}
+
+// 随机延时函数
+func images(w http.ResponseWriter, r *http.Request) {
+	timer := metrics.NewTimer()
+	defer timer.ObserveTotal()
+	randInt := rand.Intn(2000)
+	time.Sleep(time.Millisecond * time.Duration(randInt))
+	w.Write([]byte(fmt.Sprintf("<h1>%d<h1>", randInt)))
 }
